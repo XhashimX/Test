@@ -3,8 +3,8 @@ import os
 import sys
 
 def download_and_send(url):
-    BOT_TOKEN = "your_telegram_bot_token"
-    CHAT_ID = "your_chat_id"
+    BOT_TOKEN = os.getenv("BOT_TOKEN")
+    CHAT_ID = os.getenv("CHAT_ID")
 
     yt_dlp_command = [
         "yt-dlp",
@@ -27,15 +27,10 @@ def download_and_send(url):
         print("Video sent to Telegram bot successfully!")
     except Exception as e:
         print(f"Error: {e}")
-    finally:
-        # Create a flag file to prevent re-sending
-        with open("video_sent_flag.txt", "w") as flag_file:
-            flag_file.write("Video sent")
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         video_url = sys.argv[1]
-        if not os.path.exists("video_sent_flag.txt"):
-            download_and_send(video_url)
+        download_and_send(video_url)
     else:
         print("Please provide the TikTok video URL as an argument.")
