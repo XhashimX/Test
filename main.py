@@ -3,8 +3,8 @@ import requests
 import yt_dlp
 from flask import Flask, request
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")  # ادخل توكن البوت الخاص بك هنا
-CHAT_ID = os.environ.get("CHAT_ID")  # ادخل معرف المحادثة الخاص بك هنا
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+CHAT_ID = os.environ.get("CHAT_ID")
 
 app = Flask(__name__)
 
@@ -14,21 +14,21 @@ def download_tiktok():
     if 'message' in update and 'text' in update['message']:
         text = update['message']['text']
         if text.startswith('/download'):
-            url = text.split('/download ', 1)[1]
-            try:
-                ydl_opts = {
-                    'outtmpl': '%(title)s.%(ext)s',
-                    'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',  # اعطاء الأولوية لـ mp4
-                }
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    info_dict = ydl.extract_info(url, download=True)
-                    filename = ydl.prepare_filename(info_dict)
-                    send_video(filename)
-                    os.remove(filename)  # حذف الملف بعد الإرسال
-                    return 'OK'
-            except Exception as e:
-                send_message(f"حدث خطأ: {e}")
-                return 'Error'
+            urls = text.split('/download ', 1)[1].split()
+            for url in urls:
+                try:
+                    ydl_opts = {
+                        'outtmpl': '%(title)s.%(ext)s',
+                        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',  # prioritize mp4
+                    }
+                    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                        info_dict = ydl.extract_info(url, download=True)
+                        filename = ydl.prepare_filename(info_dict)
+                        send_video(filename)
+                        os.remove(filename)  # Delete the file after sending
+                except Exception as e:
+                    send_message(f"حدث خطأ أثناء معالجة الرابط {url}: {e}")
+            return 'OK'
 
     return 'OK'
 
