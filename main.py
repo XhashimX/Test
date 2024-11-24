@@ -2,7 +2,7 @@ import subprocess
 import os
 
 def download_and_send():
-    URL = "https://www.tiktok.com/@ibu1b/video/7345634652016610565"
+    URL = "https://vm.tiktok.com/ZNe3hDFKa/"
     BOT_TOKEN = "your_telegram_bot_token"
     CHAT_ID = "your_chat_id"
 
