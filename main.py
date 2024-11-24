@@ -3,8 +3,8 @@ import requests
 import yt_dlp
 from flask import Flask, request
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")  #  7749324996:AAFSpsRIyPCQ9dxzOuShUATSm3V9MP1goD4
-CHAT_ID = os.environ.get("CHAT_ID") # 421777948
+BOT_TOKEN = os.environ.get("BOT_TOKEN")  # ادخل توكن البوت الخاص بك هنا
+CHAT_ID = os.environ.get("CHAT_ID")  # ادخل معرف المحادثة الخاص بك هنا
 
 app = Flask(__name__)
 
@@ -18,13 +18,13 @@ def download_tiktok():
             try:
                 ydl_opts = {
                     'outtmpl': '%(title)s.%(ext)s',
-                    'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best', # prioritize mp4
+                    'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',  # اعطاء الأولوية لـ mp4
                 }
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     info_dict = ydl.extract_info(url, download=True)
                     filename = ydl.prepare_filename(info_dict)
                     send_video(filename)
-                    os.remove(filename)  # Delete the file after sending
+                    os.remove(filename)  # حذف الملف بعد الإرسال
                     return 'OK'
             except Exception as e:
                 send_message(f"حدث خطأ: {e}")
@@ -45,4 +45,3 @@ def send_message(message):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
-
