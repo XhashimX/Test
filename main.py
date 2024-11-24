@@ -1,15 +1,15 @@
 import subprocess
 import os
+import sys
 
-def download_and_send():
-    URL = "https://vm.tiktok.com/ZNe3hDFKa/"
+def download_and_send(url):
     BOT_TOKEN = "your_telegram_bot_token"
     CHAT_ID = "your_chat_id"
 
     yt_dlp_command = [
         "yt-dlp",
         "-o", "-",
-        URL
+        url
     ]
 
     curl_command = [
@@ -33,5 +33,9 @@ def download_and_send():
             flag_file.write("Video sent")
 
 if __name__ == "__main__":
-    if not os.path.exists("video_sent_flag.txt"):
-        download_and_send()
+    if len(sys.argv) > 1:
+        video_url = sys.argv[1]
+        if not os.path.exists("video_sent_flag.txt"):
+            download_and_send(video_url)
+    else:
+        print("Please provide the TikTok video URL as an argument.")
