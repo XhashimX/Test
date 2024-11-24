@@ -1,11 +1,13 @@
+from flask import Flask, request
 import subprocess
 import os
-import sys
+
+app = Flask(__name__)
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
 def download_and_send(url):
-    BOT_TOKEN = os.getenv("BOT_TOKEN")
-    CHAT_ID = os.getenv("CHAT_ID")
-
     yt_dlp_command = [
         "yt-dlp",
         "-o", "-",
@@ -24,13 +26,14 @@ def download_and_send(url):
         curl_process = subprocess.Popen(curl_command, stdin=yt_dlp_process.stdout)
         yt_dlp_process.stdout.close()
         curl_process.communicate()
-        print("Video sent to Telegram bot successfully!")
+        return "Video sent to Telegram bot successfully!"
     except Exception as e:
-        print(f"Error: {e}")
+        return f"Error: {e}"
+
+@app.route('/download', methods=['POST'])
+def download():
+    url = request.form['url']
+    return download_and_send(url)
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        video_url = sys.argv[1]
-        download_and_send(video_url)
-    else:
-        print("Please provide the TikTok video URL as an argument.")
+    app.run(host='0.0.0.0', port=5000)
